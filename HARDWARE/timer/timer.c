@@ -59,11 +59,9 @@ void TIM16_Initial(uint16_t periodHz)
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;											//复用推挽输出
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_5);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM16 , ENABLE);
-
     TIM_TimeBaseStructure.TIM_Prescaler = 10 - 1;                       														//预分频系数为10-1，这样计数器计数频率为48MHz/10 = 2MHz
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;																	//TIM向上计数模式
     TIM_TimeBaseStructure.TIM_Period = (uint16_t) (SystemCoreClock / (periodHz * basePeroid)) - 1; //设置计数溢出大小，
@@ -71,7 +69,6 @@ void TIM16_Initial(uint16_t periodHz)
 
     TIM_TimeBaseInit(TIM16, &TIM_TimeBaseStructure);
 
-    /* Channel 1, 2,3 and 4 Configuration in PWM mode */
     TIM_OCStructInit(&TIM_OCInitStructure);
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;																		//选择定时器模式:TIM脉冲宽度调制模式1
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;												//比较输出使能
@@ -120,23 +117,17 @@ void TIM14_Initial(uint16_t periodHz)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14 , ENABLE);
 
     /* Time Base configuration */
-    TIM_TimeBaseStructure.TIM_Prescaler = 10-1;
+    TIM_TimeBaseStructure.TIM_Prescaler = 10 - 1;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_Period = (uint16_t) (SystemCoreClock / (periodHz * basePeroid)) - 1;
-//    TIM_TimeBaseStructure.TIM_Period = 48000-1;//(uint16_t) (100000 / (periodHz*basePeroid)) - 1;//TimerPeriod;
-//    TIM_TimeBaseStructure.TIM_Period = (uint16_t) (100000 / (periodHz * basePeroid)) - 1; //TimerPeriod;
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-
     TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
 
-    /* Channel 1, 2,3 and 4 Configuration in PWM mode */
     TIM_OCStructInit(&TIM_OCInitStructure);
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable;
-//    TIM_OCInitStructure.TIM_Pulse =24000;//(uint16_t) (100000 / (periodHz*basePeroid))/2;
-//    TIM_OCInitStructure.TIM_Pulse = (uint16_t) (100000 / (periodHz * basePeroid)) / 2;
     TIM_OCInitStructure.TIM_Pulse = (uint16_t)(SystemCoreClock / (periodHz * basePeroid)) / 2;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
     TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
@@ -145,7 +136,6 @@ void TIM14_Initial(uint16_t periodHz)
     TIM_OC1Init(TIM14, &TIM_OCInitStructure);
 
 //    TIM_Cmd(TIM14, ENABLE);
-
     TIM_CtrlPWMOutputs(TIM14, ENABLE);
 }
 
@@ -162,9 +152,11 @@ void TIM3_IRQHandler(void)
     {
         TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
-        time3Usart1ms++;
+        if(time3Usart1ms > 0)
+            time3Usart1ms++;
 
         if(time2Counter1ms < 10000)time2Counter1ms++;
+				
         if(delayCounter)delayCounter--;
 
 //	if(sensevi == 6)sensevi = 0;

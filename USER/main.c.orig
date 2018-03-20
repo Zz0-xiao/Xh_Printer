@@ -6,7 +6,7 @@
 #include "sensor.h"
 
 // TIM14,TIM16 PWM 频率设定
-#define INIHz 10000
+#define INIHz 100
 
 HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff);
 void ResultSend(uint8_t* pbuff, HAL_StatusTypeDef result);
@@ -17,6 +17,7 @@ HAL_StatusTypeDef processResult = HAL_INI;
 
 uint8_t PaperDetection = 0; //有无纸张标志
 uint8_t etc = 0;//到位等待标志 1为到达位置
+
 static void IWDG_Config(void)
 {
     IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
@@ -32,11 +33,11 @@ int main(void)
     Delay_init();
 
     TIM3_Initial();
-    TIM14_Initial(INIHz);
-    TIM16_Initial(INIHz);
+    TIM14_Initial(1000);
+    TIM16_Initial(10000);
     UART_Initial(USART1, 9600);
     UART_TransmitData_API(USART1, "XH-Wardrobe-V2.5", 0, SENDNOPROTOCOL);
-   IWDG_Config();
+//    IWDG_Config();
 
     SENSOR_Init();
     Motor_Init();
@@ -60,6 +61,7 @@ int main(void)
         if(time2Counter1ms > 99)
         {
             Main_Process();
+            time2Counter1ms = 1;
         }
         IWDG_ReloadCounter();
     }
@@ -71,9 +73,10 @@ int main(void)
 参数：null
 返回：null
 *******************************/
+uint16_t  MotorOverTime = 0;
+
 void Main_Process(void)
 {
-
     //如果到位标志为0并且没有纸张就复位
     Reset();
 
@@ -81,7 +84,7 @@ void Main_Process(void)
     {
         HAL_Delayms(500);
         processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU表示托盘回原位
-			  etc = 0;
+        etc = 0;
         PaperDetection = 1;
     }
     else if(RINFRARE == Bit_SET)
@@ -93,18 +96,25 @@ void Main_Process(void)
 //        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//水平电机停止
         processResult = MotorDrive57(MOTORV, MOTOR_MOVE_BD);//上升
     }
-    else if(SENSOR_Scan() == HSENSOR_RESPONSE)
+    else if((SENSOR_Scan() == HSENSOR_RESPONSE) && (PaperDetection == 1))
     {
         processResult = MotorDrive57(MOTORV, MOTOR_STOP);//上升停止
         Put(RUN);
+//			  PaperDetection = 0;
     }
 
-    if(HINFRARE == Bit_RESET)
+    if((HINFRARE == Bit_RESET)  && (PaperDetection == 1)&&(SENSOR_Scan() == HSENSOR_RESPONSE))
     {
         Put(STOP);
-				PaperDetection = 0;
+        PaperDetection = 0;
+        UART_TransmitData_API(USART1, "Out_End", 0, SENDNOPROTOCOL);
     }
 
+//		MotorOverTime++;
+//		if(MotorOverTime>20000)
+//		{
+//
+//		}
 
     /*   if((PaperDetection == 1) && (SENSOR_Scan() == HSENSOR_RESPONSE))
         {
@@ -152,7 +162,7 @@ void Reset(void)
     {
         processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU表示向下
     }
-    else if((SENSOR_Scan() == LSENSOR_RESPONSE) && (PaperDetection == 0) && (etc == 0))
+    else if((SENSOR_Scan() == LSENSOR_RESPONSE) && (PaperDetection == 0) && (etc == 0) && (RINFRARE == Bit_SET))
     {
         processResult = MotorDrive57(MOTORV, MOTOR_STOP);
         //水平位置托盘伸出
@@ -160,7 +170,7 @@ void Reset(void)
         HAL_Delayms(3000);
         etc = 1;
         processResult = MotorDrive57(MOTORH, MOTOR_STOP);
-        UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);
+        UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);//等待纸张
     }
 
 

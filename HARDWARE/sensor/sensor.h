@@ -9,7 +9,7 @@
 #define LSENSOR	  GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_6)//低的位置传感器竖直方向
 #define HSENSOR	  GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_7)
 
-#define LINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5)//低的红外传感器检测有无物体掉落
+#define LINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5)//低的红外传感器检测有无物体掉落 s1
 #define HINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6)
 #define RINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)//水平复位用
 
