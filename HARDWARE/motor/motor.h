@@ -19,8 +19,8 @@
 #define PUT_L()		GPIO_ResetBits(GPIOA, GPIO_Pin_2)
 #define PUT_H()		GPIO_SetBits(GPIOA, GPIO_Pin_2)
 
-#define TIMEEND   0
-#define TIMESTART 1
+//#define TIMEEND   0
+//#define TIMESTART 1
 
 #define RUN   0
 #define STOP   1

@@ -12,7 +12,8 @@ TIM_TypeDef* MOTORTIM[] = {TIM14, TIM16};
 uint8_t motorState[2] = {MOTOR_STOP, MOTOR_STOP}; //记录电机状态，电机转向改变时不突变
 
 //小电机转到下一标志计时
-//volatile uint32_t timeOut[] = {TIMEEND, TIMEEND};
+// uint32_t timeOut[2] = {TIMEEND, TIMEEND};
+
 
 void Motor_Init(void)
 {

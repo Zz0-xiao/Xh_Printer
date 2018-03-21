@@ -17,7 +17,10 @@ HAL_StatusTypeDef processResult = HAL_INI;
 
 uint8_t PaperDetection = 0; //有无纸张标志
 uint8_t etc = 0;//到位等待标志 1为到达位置
-uint16_t printDelay = 0;
+
+uint16_t printDelay = 0;//时间计数
+uint16_t motorTimeH = 0;
+uint16_t motorTimeV = 0;
 
 static void IWDG_Config(void)
 {
@@ -102,7 +105,6 @@ void Main_Process(void)
     //水平原位，有纸张，托盘在高，
     if((PaperDetection == 1) && (RINFRARE == Bit_SET) && (SENSOR_Scan() != HSENSOR_RESPONSE ))
     {
-//        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//水平电机停止
         processResult = MotorDrive57(MOTORV, MOTOR_MOVE_BD);//上升
     }
     else if((SENSOR_Scan() == HSENSOR_RESPONSE) && (PaperDetection == 1))
@@ -117,7 +119,6 @@ void Main_Process(void)
             Put(STOP);
             printDelay = 0;
         }
-
     }
 
     if((HINFRARE == Bit_RESET)  && (PaperDetection == 1) && (SENSOR_Scan() == HSENSOR_RESPONSE))
@@ -129,23 +130,26 @@ void Main_Process(void)
     }
 
 //电机超时
-//    if((motorState[MOTORV] != MOTOR_STOP) || (motorState[MOTORH] != MOTOR_STOP))
-//    {
-//        printDelay++;
-//        if((motorState[MOTORH] != MOTOR_STOP) && printDelay > 2000)
-//        {
-//            TIM_Cmd(MOTORTIM[MOTORV], DISABLE);
-////            printDelay = 0;
-//        }
-//        if((motorState[MOTORH] != MOTOR_STOP) && printDelay > 500)
-//        {
-//            TIM_Cmd(MOTORTIM[MOTORH], DISABLE);
-////            printDelay = 0;
-//        }
-//    }
-//		if((motorState[MOTORV] == MOTOR_STOP) && (motorState[MOTORH] == MOTOR_STOP))
-//			printDelay = 0;
-}
+    if((motorState[MOTORV] != MOTOR_STOP) || (motorState[MOTORH] != MOTOR_STOP))
+    {
+        motorTimeH++;
+        motorTimeV++;
+        if((motorState[MOTORH] != MOTOR_STOP) && motorTimeV > 2000)
+        {
+            TIM_Cmd(MOTORTIM[MOTORV], DISABLE);
+            motorTimeV = 0;
+        }
+        if((motorState[MOTORH] != MOTOR_STOP) && motorTimeH > 500)
+        {
+            TIM_Cmd(MOTORTIM[MOTORH], DISABLE);
+            motorTimeH = 0;
+        }
+    }
+    if(motorState[MOTORV] == MOTOR_STOP)
+        motorTimeV = 0;
+    if(motorState[MOTORH] == MOTOR_STOP)
+        motorTimeH = 0;
+    }
 
 /*******************************
 名称：Reset();
@@ -196,7 +200,7 @@ void Reset(void)
 *******************************/
 const uint32_t DEV_ID = 0xffffffff;//初始必须为ffffffff,否则写入不成功
 
-HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff)
+                        HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff)
 {
 //	HAL_StatusTypeDef processResult;
 //	uint16_t cmdr;
