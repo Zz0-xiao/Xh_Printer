@@ -6,7 +6,7 @@
 #include "sensor.h"
 
 // TIM14,TIM16 PWM 频率设定
-#define INIHz 100
+#define INIHz 1000
 
 HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff);
 void ResultSend(uint8_t* pbuff, HAL_StatusTypeDef result);
@@ -17,6 +17,7 @@ HAL_StatusTypeDef processResult = HAL_INI;
 
 uint8_t PaperDetection = 0; //有无纸张标志
 uint8_t etc = 0;//到位等待标志 1为到达位置
+uint16_t printDelay = 0;
 
 static void IWDG_Config(void)
 {
@@ -33,8 +34,8 @@ int main(void)
     Delay_init();
 
     TIM3_Initial();
-    TIM14_Initial(1000);
-    TIM16_Initial(10000);
+    TIM14_Initial(INIHz);
+    TIM16_Initial(INIHz);
     UART_Initial(USART1, 9600);
     UART_TransmitData_API(USART1, "XH-Wardrobe-V2.5", 0, SENDNOPROTOCOL);
 //    IWDG_Config();
@@ -73,25 +74,33 @@ int main(void)
 参数：null
 返回：null
 *******************************/
-uint16_t  MotorOverTime = 0;
+//uint16_t  MotorOverTime = 0;
+
 
 void Main_Process(void)
 {
     //如果到位标志为0并且没有纸张就复位
     Reset();
-
-    if((PaperDetection == 0) && (LINFRARE == Bit_SET) && (SENSOR_Scan() == LSENSOR_RESPONSE)) //有纸张掉落。。低的传感器有物体，传感器位置低
+    //有纸张掉落。。低的传感器有物体，传感器位置低
+    if((PaperDetection == 0) && (LINFRARE == Bit_SET) && (SENSOR_Scan() == LSENSOR_RESPONSE))
     {
-        HAL_Delayms(500);
-        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU表示托盘回原位
-        etc = 0;
-        PaperDetection = 1;
+//        HAL_Delayms(500);
+        printDelay++;
+        if(printDelay == 10)
+        {
+            processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU表示托盘回原位
+            etc = 0;
+            PaperDetection = 1;
+            printDelay = 0;
+        }
     }
     else if(RINFRARE == Bit_SET)
+    {
         processResult = MotorDrive57(MOTORH, MOTOR_STOP);//水平电机停止
-
-
-    if((PaperDetection == 1) && (RINFRARE == Bit_SET) && (SENSOR_Scan() != HSENSOR_RESPONSE )) //水平到位，上升..有纸张，托盘在原位，
+//        printDelay = 0;
+    }
+    //水平原位，有纸张，托盘在高，
+    if((PaperDetection == 1) && (RINFRARE == Bit_SET) && (SENSOR_Scan() != HSENSOR_RESPONSE ))
     {
 //        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//水平电机停止
         processResult = MotorDrive57(MOTORV, MOTOR_MOVE_BD);//上升
@@ -101,6 +110,14 @@ void Main_Process(void)
         processResult = MotorDrive57(MOTORV, MOTOR_STOP);//上升停止
         Put(RUN);
 //			  PaperDetection = 0;
+        //电机超时
+        printDelay++;
+        if(printDelay > 100)
+        {
+            Put(STOP);
+            printDelay = 0;
+        }
+
     }
 
     if((HINFRARE == Bit_RESET)  && (PaperDetection == 1) && (SENSOR_Scan() == HSENSOR_RESPONSE))
@@ -108,30 +125,26 @@ void Main_Process(void)
         Put(STOP);
         PaperDetection = 0;
         UART_TransmitData_API(USART1, "Out_End", 0, SENDNOPROTOCOL);
+        printDelay = 0;
     }
 
-//		MotorOverTime++;
-//		if(MotorOverTime>20000)
-//		{
-//
-//		}
-
-    /*   if((PaperDetection == 1) && (SENSOR_Scan() == HSENSOR_RESPONSE))
-        {
-              processResult = MotorDrive57(MOTORV, MOTOR_STOP);//上升停止
-            Put(RUN);
-            UART_TransmitData_API(USART1, "Put_paper", 0, SENDNOPROTOCOL);
-        }
-
-    ///////////////
-        if(HINFRARE == 0)
-        {
-            PaperDetection = 0;
-            Put(STOP);
-            UART_TransmitData_API(USART1, "Reset_wait ", 0, SENDNOPROTOCOL);
-            Reset();
-        }
-    */
+//电机超时
+//    if((motorState[MOTORV] != MOTOR_STOP) || (motorState[MOTORH] != MOTOR_STOP))
+//    {
+//        printDelay++;
+//        if((motorState[MOTORH] != MOTOR_STOP) && printDelay > 2000)
+//        {
+//            TIM_Cmd(MOTORTIM[MOTORV], DISABLE);
+////            printDelay = 0;
+//        }
+//        if((motorState[MOTORH] != MOTOR_STOP) && printDelay > 500)
+//        {
+//            TIM_Cmd(MOTORTIM[MOTORH], DISABLE);
+////            printDelay = 0;
+//        }
+//    }
+//		if((motorState[MOTORV] == MOTOR_STOP) && (motorState[MOTORH] == MOTOR_STOP))
+//			printDelay = 0;
 }
 
 /*******************************
@@ -172,59 +185,6 @@ void Reset(void)
         processResult = MotorDrive57(MOTORH, MOTOR_STOP);
         UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);//等待纸张
     }
-
-
-    /*    //水平复位
-        if(RINFRARE == Bit_RESET )///消抖感觉可以不用
-        {
-            processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU表示托盘回原位
-            while(RINFRARE == Bit_RESET)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORH, MOTOR_STOP);
-        }
-
-
-        if(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == Bit_RESET)
-        {
-            processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU表示向下
-            while(SENSOR_Scan() != LSENSOR_RESPONSE)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORV, MOTOR_STOP);
-        }
-
-
-        //水平复位
-        if(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == Bit_RESET)
-        {
-            processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU表示向下
-            while(SENSOR_Scan() != LSENSOR_RESPONSE)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORV, MOTOR_STOP);
-        }
-
-        //竖直复位
-    //    while(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    {
-    //        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);
-    //        IWDG_ReloadCounter();
-    //    }
-
-        //水平位置托盘伸出
-        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_BD);
-        HAL_Delayms(3000);
-
-        processResult = MotorDrive57(MOTORH, MOTOR_STOP);
-
-        UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);
-    		*/
 }
 
 

@@ -26,8 +26,8 @@
 #define STOP   1
 
 //uint8_t motorState[2]; 
-
-
+extern uint8_t motorState[2]; 
+extern TIM_TypeDef* MOTORTIM[];
 typedef enum
 {
     MOTORV = 0,//竖直电机索引

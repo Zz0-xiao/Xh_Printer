@@ -178,7 +178,7 @@
           <Type>0</Type>
           <LineNumber>63</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134223042</Address>
+          <Address>134223050</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -192,9 +192,9 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>81</LineNumber>
+          <LineNumber>152</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218502</Address>
+          <Address>134219990</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -203,7 +203,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>C:\Users\Administrator\Desktop\xh_鍙戣。鏌?demo\stm32f030Template\USER\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Template\main.c\81</Expression>
+          <Expression>\\Template\main.c\152</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

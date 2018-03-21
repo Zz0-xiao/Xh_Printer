@@ -44,31 +44,6 @@ void Delay_ms(int16_t nms)
     SysTick->VAL = 0X00;      //清空计数器
 }
 
-//void Delay_10ms(uint32_t ms)
-//{
-//    int i = 0;
-//    while(ms--)
-//    {
-//        i = 1680;
-//        while(i--)
-//        {
-//            IWDG_ReloadCounter();
-//        }
-//    }
-//}
-
-//void HAL_Delay(uint32_t time1ms)
-//{
-//	int i = 0;
-//	while(time1ms--)
-//	{
-//		i=1680;
-//		while(i--)
-//		{
-//			IWDG_ReloadCounter();
-//		}
-//	}
-//}
 
 /*******************************
 名称：HAL_Delayms(int ms);
