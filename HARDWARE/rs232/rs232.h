@@ -4,15 +4,15 @@
 #include "stm32f0xx.h"
 
 
-#define MAXREVSIZE 512		//¶¨Òå×î´ó½ÓÊÕ×Ö½ÚÊı 512
+#define MAXREVSIZE 512		//å®šä¹‰æœ€å¤§æ¥æ”¶å­—èŠ‚æ•° 512
 
-//extern uint16_t UART1RXDataLenth£»//UART1½ÓÊÜÊı¾İ³¤¶È
-//HAL_StatusTypeDef UARTFaultStatus; //´®¿Ú±¨³¬Ê±
+//extern uint16_t UART1RXDataLenthï¼›//UART1æ¥å—æ•°æ®é•¿åº¦
+//HAL_StatusTypeDef UARTFaultStatus; //ä¸²å£æŠ¥è¶…æ—¶
 
 extern uint8_t UART1RevData[MAXREVSIZE];
 //extern uint8_t UART2RevData[MAXREVSIZE];
 
-extern uint16_t UART1RXDataLenth;//UART1½ÓÊÜÊı¾İ³¤¶È
+extern uint16_t UART1RXDataLenth;//UART1æ¥å—æ•°æ®é•¿åº¦
 
 
 typedef enum
@@ -23,42 +23,42 @@ typedef enum
     HAL_BUSY,
     HAL_TIMEOUT,
 
-    HAL_UART1TIMEOUT,//´®¿Ú1½ÓÊÕ³¬Ê±
-    HAL_UART2TIMEOUT,//´®¿Ú2½ÓÊÕ³¬Ê±
-    HAL_UART1RXFULL,//´®¿Ú1×°
+    HAL_UART1TIMEOUT,//ä¸²å£1æ¥æ”¶è¶…æ—¶
+    HAL_UART2TIMEOUT,//ä¸²å£2æ¥æ”¶è¶…æ—¶
+    HAL_UART1RXFULL,//ä¸²å£1è£…
     HAL_UART2RXFULL,
 
-    HAL_NULL,//Ã»ÓĞ½ÓÊÕµ½Êı¾İ
-    HAL_HEADERROR,//ÊÕµ½Í·´íÎó
-    HAL_ENDERROR, //Í·ÕıÈ·£¬Î²´íÎó
-    HAL_XORERROR,//Ğ£ÑéÎ»´íÎó
+    HAL_NULL,//æ²¡æœ‰æ¥æ”¶åˆ°æ•°æ®
+    HAL_HEADERROR,//æ”¶åˆ°å¤´é”™è¯¯
+    HAL_ENDERROR, //å¤´æ­£ç¡®ï¼Œå°¾é”™è¯¯
+    HAL_XORERROR,//æ ¡éªŒä½é”™è¯¯
     HAL_CRCERROR,
 
     HAL_VMOTOROK,
     HAL_HMOTOROK,
     HAL_DCMOTOROK,
-    HAL_MOTORERROR,//µç»ú´íÎó
+    HAL_MOTORERROR,//ç”µæœºé”™è¯¯
     HAL_DCTIMEOUT,
 } HAL_StatusTypeDef;
 
 typedef enum
 {
-    SENDNOPROTOCOL = 0,//·¢ËÍº¯Êı×¨ÓÃ£¬·¢ËÍÊı¾İÊÇ·ñÌí¼ÓÍ·Î²£¬ÒÔ¼°Ğ­Òé
+    SENDNOPROTOCOL = 0,//å‘é€å‡½æ•°ä¸“ç”¨ï¼Œå‘é€æ•°æ®æ˜¯å¦æ·»åŠ å¤´å°¾ï¼Œä»¥åŠåè®®
 //	SENDPROTOCOL,
 //	SENDNOHEAD,
 //	SENDNOEND,
 //
-//	UARTSETNOPARAMETER,//UART³õÊ¼»¯×¨ÓÃ£¬ÊÇ·ñ´ø²ÎÊı³õÊ¼»¯
+//	UARTSETNOPARAMETER,//UARTåˆå§‹åŒ–ä¸“ç”¨ï¼Œæ˜¯å¦å¸¦å‚æ•°åˆå§‹åŒ–
 //	UARTSETPARAMETER
 } PARAMETER;
 
 
-HAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart, int buad);//´®¿Ú³õÊ¼»¯
-HAL_StatusTypeDef CheckProtocol(USART_TypeDef *uart, uint8_t* pbuff);//¼ì²éĞ­Òé£¬²¢²»ÉùÃ÷
+HAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart, int buad);//ä¸²å£åˆå§‹åŒ–
+HAL_StatusTypeDef CheckProtocol(USART_TypeDef *uart, uint8_t* pbuff);//æ£€æŸ¥åè®®ï¼Œå¹¶ä¸å£°æ˜
 HAL_StatusTypeDef CheckCrc(void);
-//´®¿Ú·¢ËÍÊı¾İ£¬×Ô¶¯Ìí¼ÓSUNRISEÒÔ¼°0X0D 0X0A,ÀûÓÃÍâ²¿»º³åÇøSendBuff¹ı¶È
+//ä¸²å£å‘é€æ•°æ®ï¼Œè‡ªåŠ¨æ·»åŠ SUNRISEä»¥åŠ0X0D 0X0A,åˆ©ç”¨å¤–éƒ¨ç¼“å†²åŒºSendBuffè¿‡åº¦
 HAL_StatusTypeDef UART_TransmitData_API(USART_TypeDef* huart, const void* data, uint16_t datasize, PARAMETER sendmode);
-//´®¿Ú·¢ËÍÊı¾İ£¬ÊÊÓÃÓÚÉñË¼£¬×Ô¶¯¼ÓÈëSDsEs,crc
+//ä¸²å£å‘é€æ•°æ®ï¼Œé€‚ç”¨äºç¥æ€ï¼Œè‡ªåŠ¨åŠ å…¥SDsEs,crc
 HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, uint16_t cmdr, uint8_t state, const void* data);
 
 #endif

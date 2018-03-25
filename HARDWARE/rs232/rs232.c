@@ -6,23 +6,23 @@
 uint8_t UART1RevData[MAXREVSIZE];
 uint8_t UART2RevData[MAXREVSIZE];
 
-uint16_t UART1RXDataLenth = 0;//UART1½ÓÊÜÊı¾İ³¤¶È
-HAL_StatusTypeDef UARTFaultStatus = HAL_OK;//´®¿Ú½ÓÊÕ±¬Õ¨
+uint16_t UART1RXDataLenth = 0;//UART1æ¥å—æ•°æ®é•¿åº¦
+HAL_StatusTypeDef UARTFaultStatus = HAL_OK;//ä¸²å£æ¥æ”¶çˆ†ç‚¸
 
 uint8_t HEAD[] =  "SDsEs";//{'S','D','s','E','s'};
 uint8_t END[]  =  "ETX";
 uint8_t HEADSIZE = sizeof(HEAD) / sizeof(uint8_t) - 1;
 uint8_t ENDSIZE = sizeof(END) / sizeof(uint8_t) - 1;
 
-uint8_t SendBuff[512];//ÓÃÓÚ×Ü·¢ËÍÔİ´æ
+uint8_t SendBuff[512];//ç”¨äºæ€»å‘é€æš‚å­˜
 
 /*******************************
-Ãû³Æ£ºHAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart,int buad)
-¹¦ÄÜ£º´®¿Ú³õÊ¼»¯
-²ÎÊı£ºUART_HandleTypeDef *huart´®¿Ú½á¹¹Ìå
-			int buad ²¨ÌØÂÊ
-·µ»Ø£ºHAL_StatusTypeDef
-			Ïê¼ûcommunication.h
+åç§°ï¼šHAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart,int buad)
+åŠŸèƒ½ï¼šä¸²å£åˆå§‹åŒ–
+å‚æ•°ï¼šUART_HandleTypeDef *huartä¸²å£ç»“æ„ä½“
+			int buad æ³¢ç‰¹ç‡
+è¿”å›ï¼šHAL_StatusTypeDef
+			è¯¦è§communication.h
 *******************************/
 
 HAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart, int buad)
@@ -32,7 +32,7 @@ HAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart, int buad)
 
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);					//Ê¹ÄÜUSART1£¬GPIOAÊ±ÖÓ
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);					//ä½¿èƒ½USART1ï¼ŒGPIOAæ—¶é’Ÿ
 
     if(huart == USART1)
     {
@@ -68,32 +68,32 @@ HAL_StatusTypeDef	UART_Initial(USART_TypeDef* huart, int buad)
 
     /* USART1 IRQ Channel configuration */
 
-    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;		//ÇÀÕ¼ÓÅÏÈ¼¶0
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;		//IRQÍ¨µÀÊ¹ÄÜ
-    NVIC_Init(&NVIC_InitStructure);										//¸ù¾İÖ¸¶¨µÄ²ÎÊı³õÊ¼»¯VIC¼Ä´æÆ÷
+    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;		//æŠ¢å ä¼˜å…ˆçº§0
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;		//IRQé€šé“ä½¿èƒ½
+    NVIC_Init(&NVIC_InitStructure);										//æ ¹æ®æŒ‡å®šçš„å‚æ•°åˆå§‹åŒ–VICå¯„å­˜å™¨
 
 
-    USART_InitStructure.USART_BaudRate = buad;								//´®¿Ú²¨ÌØÂÊ
-    USART_InitStructure.USART_WordLength = USART_WordLength_8b;//×Ö³¤Îª8Î»Êı¾İ¸ñÊ½
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;//Ò»¸öÍ£Ö¹Î»
-    USART_InitStructure.USART_Parity = USART_Parity_No;//ÎŞÆæÅ¼Ğ£ÑéÎ»
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//ÎŞÓ²¼şÊı¾İÁ÷¿ØÖÆ
-    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;//ÊÕ·¢Ä£Ê½
+    USART_InitStructure.USART_BaudRate = buad;								//ä¸²å£æ³¢ç‰¹ç‡
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;//å­—é•¿ä¸º8ä½æ•°æ®æ ¼å¼
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;//ä¸€ä¸ªåœæ­¢ä½
+    USART_InitStructure.USART_Parity = USART_Parity_No;//æ— å¥‡å¶æ ¡éªŒä½
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//æ— ç¡¬ä»¶æ•°æ®æµæ§åˆ¶
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;//æ”¶å‘æ¨¡å¼
 
-    USART_Init(huart, &USART_InitStructure);			//³õÊ¼»¯´®¿Ú
-    USART_ITConfig(huart, USART_IT_RXNE, ENABLE);//¿ªÆô´®¿Ú½ÓÊÜÖĞ¶Ï
+    USART_Init(huart, &USART_InitStructure);			//åˆå§‹åŒ–ä¸²å£
+    USART_ITConfig(huart, USART_IT_RXNE, ENABLE);//å¼€å¯ä¸²å£æ¥å—ä¸­æ–­
 
 
     /* Enable the 8xUSARTs */
-    USART_Cmd(huart, ENABLE);						//Ê¹ÄÜ´®¿Ú
+    USART_Cmd(huart, ENABLE);						//ä½¿èƒ½ä¸²å£
     return HAL_OK;
 }
 
 /*******************************
-Ãû³Æ£ºCheckProtocol(uint8_t* pbuff)
-¹¦ÄÜ£º¼ì²éĞ­Òé£¬²¢²»ÉùÃ÷
-²ÎÊı£ºUSART_TypeDef *uart ´®¿ÚºÅ uint8_t* pbuff ½ÓÊÕÈ«²¿Êı¾İ£¬²»Æ«ÒÆ
-·µ»Ø£ºHAL_StatusTypeDef communication.h
+åç§°ï¼šCheckProtocol(uint8_t* pbuff)
+åŠŸèƒ½ï¼šæ£€æŸ¥åè®®ï¼Œå¹¶ä¸å£°æ˜
+å‚æ•°ï¼šUSART_TypeDef *uart ä¸²å£å· uint8_t* pbuff æ¥æ”¶å…¨éƒ¨æ•°æ®ï¼Œä¸åç§»
+è¿”å›ï¼šHAL_StatusTypeDef communication.h
 *******************************/
 HAL_StatusTypeDef CheckProtocol(USART_TypeDef *uart, uint8_t* pbuff)
 {
@@ -142,13 +142,13 @@ HAL_StatusTypeDef CheckCrc(void)
 }
 
 /*******************************
-Ãû³Æ£ºUART_TransmitData_API();;
-¹¦ÄÜ£º´®¿Ú·¢ËÍÊı¾İ£¬×Ô¶¯Ìí¼ÓSUNRISEÒÔ¼°0X0D 0X0A,ÀûÓÃÍâ²¿»º³åÇøSendBuff¹ı¶È
-²ÎÊı£ºUART_HandleTypeDef *huart´®¿Ú½á¹¹Ìå
-			const void* dataÍâ²¿½ÓÊÕÊı¾İÖ¸Õë
-			uint16_t datasize·¢ËÍÊı¾İ´óĞ¡£¬·ÀÖ¹Òç³ö
-			PARAMETER sendmode ·¢ËÍÄ£Ê½£¬¾ßÌå²ÎÊı¼û½á¹¹Ìå
-·µ»Ø£ºHAL_StatusTypeDef communication.h
+åç§°ï¼šUART_TransmitData_API();;
+åŠŸèƒ½ï¼šä¸²å£å‘é€æ•°æ®ï¼Œè‡ªåŠ¨æ·»åŠ SUNRISEä»¥åŠ0X0D 0X0A,åˆ©ç”¨å¤–éƒ¨ç¼“å†²åŒºSendBuffè¿‡åº¦
+å‚æ•°ï¼šUART_HandleTypeDef *huartä¸²å£ç»“æ„ä½“
+			const void* dataå¤–éƒ¨æ¥æ”¶æ•°æ®æŒ‡é’ˆ
+			uint16_t datasizeå‘é€æ•°æ®å¤§å°ï¼Œé˜²æ­¢æº¢å‡º
+			PARAMETER sendmode å‘é€æ¨¡å¼ï¼Œå…·ä½“å‚æ•°è§ç»“æ„ä½“
+è¿”å›ï¼šHAL_StatusTypeDef communication.h
 *******************************/
 HAL_StatusTypeDef UART_TransmitData_API(USART_TypeDef* huart, const void* data, uint16_t datasize, PARAMETER sendmode)
 {
@@ -185,7 +185,7 @@ HAL_StatusTypeDef UART_TransmitData_API(USART_TypeDef* huart, const void* data, 
         while(USART_GetFlagStatus(huart, USART_FLAG_TXE) == RESET)
         {
             timeout++;
-            if(timeout == SystemCoreClock / 1000) //·¢ËÍ³¬Ê±1ms
+            if(timeout == SystemCoreClock / 1000) //å‘é€è¶…æ—¶1ms
                 return HAL_TIMEOUT;
         }
     }
@@ -193,13 +193,13 @@ HAL_StatusTypeDef UART_TransmitData_API(USART_TypeDef* huart, const void* data, 
 }
 
 /*******************************
-Ãû³Æ£ºUART_TransmitData_SDSES()
-¹¦ÄÜ£º´®¿Ú·¢ËÍÊı¾İ£¬ÊÊÓÃÓÚÉñË¼£¬×Ô¶¯¼ÓÈëSDsEs,crc
-²ÎÊı£ºUART_HandleTypeDef *huart´®¿Ú½á¹¹Ìå
-			uint32_t ³¤¶È£¬Ö»ÊÇdata³¤¶È,º¯ÊıÖĞ×Ô¶¯¼Ó5
-			cmdr  ÃüÁî
-			data  ·¢ËÍÊı¾İ,²»°üº¬ÈÎºÎĞ­ÒéÄÚÈİ£¬Ö»ÊÇdataÊı¾İ£¬»òÊı×é
-·µ»Ø£ºHAL_StatusTypeDef communication.h
+åç§°ï¼šUART_TransmitData_SDSES()
+åŠŸèƒ½ï¼šä¸²å£å‘é€æ•°æ®ï¼Œé€‚ç”¨äºç¥æ€ï¼Œè‡ªåŠ¨åŠ å…¥SDsEs,crc
+å‚æ•°ï¼šUART_HandleTypeDef *huartä¸²å£ç»“æ„ä½“
+			uint32_t é•¿åº¦ï¼Œåªæ˜¯dataé•¿åº¦,å‡½æ•°ä¸­è‡ªåŠ¨åŠ 5
+			cmdr  å‘½ä»¤
+			data  å‘é€æ•°æ®,ä¸åŒ…å«ä»»ä½•åè®®å†…å®¹ï¼Œåªæ˜¯dataæ•°æ®ï¼Œæˆ–æ•°ç»„
+è¿”å›ï¼šHAL_StatusTypeDef communication.h
 *******************************/
 HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, uint16_t cmdr, uint8_t state, const void* data)
 {
@@ -210,11 +210,11 @@ HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, ui
     uint8_t* pdata = (uint8_t*) data;
     if(len == 0)
         len = strlen((char*)pdata);
-    //Í· SDsEs 5
+    //å¤´ SDsEs 5
     memcpy(SendBuff, HEAD, HEADSIZE);
     sendLen += HEADSIZE;
-    //³¤¶È 4×Ö½Ú
-    len += 5;            //³¤¶ÈÒÑ¼Ó5
+    //é•¿åº¦ 4å­—èŠ‚
+    len += 5;            //é•¿åº¦å·²åŠ 5
     for(i = 0; i < 4; i++)
     {
         lenth[i] = (len >> ((3 - i) * 8)) & 0xff;
@@ -226,13 +226,13 @@ HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, ui
     cmd[1] = cmdr & 0xff;
     memcpy(SendBuff + sendLen, cmd, 2);
     sendLen += 2;
-    //state 1×Ö½Ú
+    //state 1å­—èŠ‚
     SendBuff[sendLen] = state;
     sendLen++;
-    //data len×Ö½Ú
+    //data lenå­—èŠ‚
     memcpy(SendBuff + sendLen, pdata, len - 5);
     sendLen += len - 5;
-    //crc 2×Ö½Ú
+    //crc 2å­—èŠ‚
     for(i = 0; i < sendLen - 5; i++)
     {
         crc16 = crc16one(SendBuff[i + 5], crc16);
@@ -249,7 +249,7 @@ HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, ui
         while(USART_GetFlagStatus(huart, USART_FLAG_TXE) == RESET)
         {
             timeout++;
-            if(timeout == SystemCoreClock / 1000) //·¢ËÍ³¬Ê±1ms
+            if(timeout == SystemCoreClock / 1000) //å‘é€è¶…æ—¶1ms
                 return HAL_TIMEOUT;
         }
     }
@@ -259,20 +259,20 @@ HAL_StatusTypeDef UART_TransmitData_SDSES(USART_TypeDef* huart, uint32_t len, ui
 void USART1_IRQHandler(void)
 {
     uint8_t tempdata;
-    USART_ClearITPendingBit(USART1, USART_IT_ORE); //OREÖĞ¶ÏÇå³ı ·ñÔò´óÁ¿Êı¾İÊ±»á³öÏÖËÀ»ú
+    USART_ClearITPendingBit(USART1, USART_IT_ORE); //OREä¸­æ–­æ¸…é™¤ å¦åˆ™å¤§é‡æ•°æ®æ—¶ä¼šå‡ºç°æ­»æœº
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
     {
         tempdata = USART_ReceiveData(USART1);
         UART1RevData[UART1RXDataLenth] = tempdata;
         UART1RXDataLenth++;
-        if(UART1RXDataLenth >= MAXREVSIZE)//½ÓÊÕ±¬Õ¨£¬
+        if(UART1RXDataLenth >= MAXREVSIZE)//æ¥æ”¶çˆ†ç‚¸ï¼Œ
         {
             UART1RXDataLenth = UART1RXDataLenth - 1;
             UARTFaultStatus = HAL_UART1RXFULL;
-            time3Usart1ms = 0;//Í£Ö¹¼ÆÊ±
+            time3Usart1ms = 0;//åœæ­¢è®¡æ—¶
         }
         else
-            time3Usart1ms = 1;//Æô¶¯¼ÆÊ±
+            time3Usart1ms = 1;//å¯åŠ¨è®¡æ—¶
     }
 }
 

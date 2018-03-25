@@ -5,7 +5,7 @@
 #include "motor.h"
 #include "sensor.h"
 
-// TIM14,TIM16 PWM ÆµÂÊÉè¶¨
+// TIM14,TIM16 PWM é¢‘ç‡è®¾å®š
 #define INIHz 100
 
 
@@ -16,8 +16,8 @@ void Reset(void);
 
 HAL_StatusTypeDef processResult = HAL_INI;
 
-uint8_t PaperDetection = 0; //ÓĞÎŞÖ½ÕÅ±êÖ¾
-uint8_t etc = 0;//µ½Î»µÈ´ı±êÖ¾ 1Îªµ½´ïÎ»ÖÃ
+uint8_t PaperDetection = 0; //æœ‰æ— çº¸å¼ æ ‡å¿—
+uint8_t etc = 0;//åˆ°ä½ç­‰å¾…æ ‡å¿— 1ä¸ºåˆ°è¾¾ä½ç½®
 
 static void IWDG_Config(void)
 {
@@ -53,7 +53,7 @@ int main(void)
 //            processResult = CheckProtocol(USART1, UART1RevData);
 //            if(processResult == HAL_OK)
 //            {
-//                processResult = Protocol_Process(UART1RevData);//Ğ­Òé´¦Àíº¯Êı
+//                processResult = Protocol_Process(UART1RevData);//åè®®å¤„ç†å‡½æ•°
 //            }
 //            UART1RXDataLenth = 0;
 //            ResultSend(UART1RevData, processResult);
@@ -62,41 +62,42 @@ int main(void)
         if(time2Counter1ms > 99)
         {
             Main_Process();
+            time2Counter1ms = 0;
         }
         IWDG_ReloadCounter();
     }
 }
 
 /*******************************
-Ãû³Æ£ºMain_Process();
-¹¦ÄÜ£ºÖ÷Ñ­»·º¯Êı£¬mainÖĞ½øÈë
-²ÎÊı£ºnull
-·µ»Ø£ºnull
+åç§°ï¼šMain_Process();
+åŠŸèƒ½ï¼šä¸»å¾ªç¯å‡½æ•°ï¼Œmainä¸­è¿›å…¥
+å‚æ•°ï¼šnull
+è¿”å›ï¼šnull
 *******************************/
 void Main_Process(void)
 {
-    //Èç¹ûµ½Î»±êÖ¾Îª0²¢ÇÒÃ»ÓĞÖ½ÕÅ¾Í¸´Î»
+    //å¦‚æœåˆ°ä½æ ‡å¿—ä¸º0å¹¶ä¸”æ²¡æœ‰çº¸å¼ å°±å¤ä½
     Reset();
 
-    if((PaperDetection == 0) && (LINFRARE == Bit_SET) && (SENSOR_Scan() == LSENSOR_RESPONSE)) //ÓĞÖ½ÕÅµôÂä¡£¡£µÍµÄ´«¸ĞÆ÷ÓĞÎïÌå£¬´«¸ĞÆ÷Î»ÖÃµÍ
+    if((PaperDetection == 0) && (LINFRARE == Bit_SET) && (SENSOR_Scan() == LSENSOR_RESPONSE)) //æœ‰çº¸å¼ æ‰è½ã€‚ã€‚ä½çš„ä¼ æ„Ÿå™¨æœ‰ç‰©ä½“ï¼Œä¼ æ„Ÿå™¨ä½ç½®ä½
     {
         HAL_Delayms(500);
-        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU±íÊ¾ÍĞÅÌ»ØÔ­Î»
+        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FUè¡¨ç¤ºæ‰˜ç›˜å›åŸä½
         etc = 0;
         PaperDetection = 1;
     }
     else if(RINFRARE == Bit_SET)
-        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//Ë®Æ½µç»úÍ£Ö¹
+        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//æ°´å¹³ç”µæœºåœæ­¢
 
 
-    if((PaperDetection == 1) && (RINFRARE == Bit_SET) && (SENSOR_Scan() != HSENSOR_RESPONSE )) //Ë®Æ½µ½Î»£¬ÉÏÉı..ÓĞÖ½ÕÅ£¬ÍĞÅÌÔÚÔ­Î»£¬
+    if((PaperDetection == 1) && (RINFRARE == Bit_SET) && (SENSOR_Scan() != HSENSOR_RESPONSE )) //æ°´å¹³åˆ°ä½ï¼Œä¸Šå‡..æœ‰çº¸å¼ ï¼Œæ‰˜ç›˜åœ¨åŸä½ï¼Œ
     {
-//        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//Ë®Æ½µç»úÍ£Ö¹
-        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_BD);//ÉÏÉı
+//        processResult = MotorDrive57(MOTORH, MOTOR_STOP);//æ°´å¹³ç”µæœºåœæ­¢
+        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_BD);//ä¸Šå‡
     }
     else if(SENSOR_Scan() == HSENSOR_RESPONSE)
     {
-        processResult = MotorDrive57(MOTORV, MOTOR_STOP);//ÉÏÉıÍ£Ö¹
+        processResult = MotorDrive57(MOTORV, MOTOR_STOP);//ä¸Šå‡åœæ­¢
         Put(RUN);
 //			  PaperDetection = 0;
     }
@@ -109,7 +110,7 @@ void Main_Process(void)
 
     /*   if((PaperDetection == 1) && (SENSOR_Scan() == HSENSOR_RESPONSE))
         {
-              processResult = MotorDrive57(MOTORV, MOTOR_STOP);//ÉÏÉıÍ£Ö¹
+              processResult = MotorDrive57(MOTORV, MOTOR_STOP);//ä¸Šå‡åœæ­¢
             Put(RUN);
             UART_TransmitData_API(USART1, "Put_paper", 0, SENDNOPROTOCOL);
         }
@@ -126,106 +127,53 @@ void Main_Process(void)
 }
 
 /*******************************
-Ãû³Æ£ºReset();
-¹¦ÄÜ£º¸´Î»
-²ÎÊı£ºnull
-·µ»Ø£ºnull
+åç§°ï¼šReset();
+åŠŸèƒ½ï¼šå¤ä½
+å‚æ•°ï¼šnull
+è¿”å›ï¼šnull
 *******************************/
 void Reset(void)
 {
-    //ËµÃ÷ÉÏ´Î¶«Î÷Î´È¡×ß
+    //è¯´æ˜ä¸Šæ¬¡ä¸œè¥¿æœªå–èµ°
 //    if(LINFRARE == Bit_SET)
 //    {
-//        PaperDetection = 1;//±ê¼ÇÓĞ¶«Î÷
+//        PaperDetection = 1;//æ ‡è®°æœ‰ä¸œè¥¿
 //        //return ???;
 //    }
-    //Ë®Æ½¸´Î»
-    if((RINFRARE == Bit_RESET)  && (etc == 0)) ///Ïû¶¶¸Ğ¾õ¿ÉÒÔ²»ÓÃ
+    //æ°´å¹³å¤ä½
+    if((RINFRARE == Bit_RESET)  && (etc == 0)) ///æ¶ˆæŠ–æ„Ÿè§‰å¯ä»¥ä¸ç”¨
     {
-        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU±íÊ¾ÍĞÅÌ»ØÔ­Î»
+        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FUè¡¨ç¤ºæ‰˜ç›˜å›åŸä½
     }
     else if(RINFRARE == Bit_SET)
     {
         processResult = MotorDrive57(MOTORH, MOTOR_STOP);
     }
-    //ÊúÖ±¸´Î»
+    //ç«–ç›´å¤ä½
     if((PaperDetection == 0) && (SENSOR_Scan() != LSENSOR_RESPONSE) && (RINFRARE == Bit_SET) && (etc == 0))
     {
-        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU±íÊ¾ÏòÏÂ
+        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FUè¡¨ç¤ºå‘ä¸‹
     }
     else if((SENSOR_Scan() == LSENSOR_RESPONSE) && (PaperDetection == 0) && (etc == 0))
     {
         processResult = MotorDrive57(MOTORV, MOTOR_STOP);
-        //Ë®Æ½Î»ÖÃÍĞÅÌÉì³ö
+        //æ°´å¹³ä½ç½®æ‰˜ç›˜ä¼¸å‡º
         processResult = MotorDrive57(MOTORH, MOTOR_MOVE_BD);
         HAL_Delayms(3000);
         etc = 1;
         processResult = MotorDrive57(MOTORH, MOTOR_STOP);
         UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);
     }
-
-
-    /*    //Ë®Æ½¸´Î»
-        if(RINFRARE == Bit_RESET )///Ïû¶¶¸Ğ¾õ¿ÉÒÔ²»ÓÃ
-        {
-            processResult = MotorDrive57(MOTORH, MOTOR_MOVE_FU);//FU±íÊ¾ÍĞÅÌ»ØÔ­Î»
-            while(RINFRARE == Bit_RESET)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORH, MOTOR_STOP);
-        }
-
-
-        if(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == Bit_RESET)
-        {
-            processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU±íÊ¾ÏòÏÂ
-            while(SENSOR_Scan() != LSENSOR_RESPONSE)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORV, MOTOR_STOP);
-        }
-
-
-        //Ë®Æ½¸´Î»
-        if(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == Bit_RESET)
-        {
-            processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);  //FU±íÊ¾ÏòÏÂ
-            while(SENSOR_Scan() != LSENSOR_RESPONSE)
-            {
-                IWDG_ReloadCounter();
-            }
-            processResult = MotorDrive57(MOTORV, MOTOR_STOP);
-        }
-
-        //ÊúÖ±¸´Î»
-    //    while(SENSOR_Scan() != LSENSOR_RESPONSE)
-    //    {
-    //        processResult = MotorDrive57(MOTORV, MOTOR_MOVE_FU);
-    //        IWDG_ReloadCounter();
-    //    }
-
-        //Ë®Æ½Î»ÖÃÍĞÅÌÉì³ö
-        processResult = MotorDrive57(MOTORH, MOTOR_MOVE_BD);
-        HAL_Delayms(3000);
-
-        processResult = MotorDrive57(MOTORH, MOTOR_STOP);
-
-        UART_TransmitData_API(USART1, "Reset_End", 0, SENDNOPROTOCOL);
-    		*/
 }
 
 
 /*******************************
-Ãû³Æ£ºProtocol_Process(uint8_t* pbuff,);
-¹¦ÄÜ£ºĞ­Òé´¦Àíº¯Êı
-²ÎÊı£ºĞ­ÒéÊı¾İ»º´æÇøpbuff
-·µ»Ø£º´¦Àí½á¹û£¬¿ÉÒÔÔÚcommunication.hÖĞÌí¼Ó
+åç§°ï¼šProtocol_Process(uint8_t* pbuff,);
+åŠŸèƒ½ï¼šåè®®å¤„ç†å‡½æ•°
+å‚æ•°ï¼šåè®®æ•°æ®ç¼“å­˜åŒºpbuff
+è¿”å›ï¼šå¤„ç†ç»“æœï¼Œå¯ä»¥åœ¨communication.hä¸­æ·»åŠ 
 *******************************/
-const uint32_t DEV_ID = 0xffffffff;//³õÊ¼±ØĞëÎªffffffff,·ñÔòĞ´Èë²»³É¹¦
+const uint32_t DEV_ID = 0xffffffff;//åˆå§‹å¿…é¡»ä¸ºffffffff,å¦åˆ™å†™å…¥ä¸æˆåŠŸ
 
 HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff)
 {
@@ -295,10 +243,10 @@ HAL_StatusTypeDef Protocol_Process(uint8_t* pbuff)
 
 
 /*******************************
-Ãû³Æ£ºResultSend(uint8_t* pbuff, uint16_t buffSize)
-¹¦ÄÜ£ºÁ÷³Ì½á¹ûÉÏ´«
-²ÎÊı£ºpbuff ½ÓÊÕ»º³åÇø£¬ÓÃÓÚ·ÇÉñË¼Ğ­ÒéÉÏ´«»Ø¸´ÃüÁî£¬result ½á¹û
-·µ»Ø£ºnull
+åç§°ï¼šResultSend(uint8_t* pbuff, uint16_t buffSize)
+åŠŸèƒ½ï¼šæµç¨‹ç»“æœä¸Šä¼ 
+å‚æ•°ï¼špbuff æ¥æ”¶ç¼“å†²åŒºï¼Œç”¨äºéç¥æ€åè®®ä¸Šä¼ å›å¤å‘½ä»¤ï¼Œresult ç»“æœ
+è¿”å›ï¼šnull
 *******************************/
 void ResultSend(uint8_t* pbuff, HAL_StatusTypeDef result)
 {
@@ -318,7 +266,7 @@ void ResultSend(uint8_t* pbuff, HAL_StatusTypeDef result)
 //		{
 //			UART_TransmitData_SDSES(USART1,0,0xA100,OPSUCCESS,"");
 //		}
-//		if(result == HAL_TIMEOUT)//µç»úÔË×÷³¬Ê±
+//		if(result == HAL_TIMEOUT)//ç”µæœºè¿ä½œè¶…æ—¶
 //		{
 //			motorErrorFlag = MOTOR_OK;
 //			MotorDrive57(MOTORV,MOTOR_STOP);
@@ -328,7 +276,7 @@ void ResultSend(uint8_t* pbuff, HAL_StatusTypeDef result)
 //		}
 //		if(result == HAL_DCTIMEOUT)
 //		{
-//			dataSDSES[0] = 0x01;//ÎŞ»õ
+//			dataSDSES[0] = 0x01;//æ— è´§
 //			UART_TransmitData_SDSES(USART1,1,0xA100,OPFAILED,dataSDSES);
 //		}
 //		if(result == HAL_CRCERROR)

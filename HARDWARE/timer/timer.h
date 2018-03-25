@@ -2,13 +2,13 @@
 #define __TIMER_H
 
 #include "stm32f0xx.h"
-extern  uint16_t time3Usart1ms;//´®¿Ú³¬Ê±¼ÆÊ±±êÖ¾
-//extern uint16_t time3Debouncet1ms;//°´¼üÏû¶¶
+extern  uint16_t time3Usart1ms;//ä¸²å£è¶…æ—¶è®¡æ—¶æ ‡å¿—
+//extern uint16_t time3Debouncet1ms;//æŒ‰é”®æ¶ˆæŠ–
 extern volatile int delayCounter;
 
-extern uint32_t time2Counter1ms;//ÍâÉè²»Õ¼ÓÃÑÓÊ±º¯ÊıÖ´ĞĞ¼ä¸ô
+extern uint32_t time2Counter1ms;//å¤–è®¾ä¸å ç”¨å»¶æ—¶å‡½æ•°æ‰§è¡Œé—´éš”
 
-//<o>TIM14¡¢TIM16 PWM»ùÊıÖÜÆÚÉè¶¨(Hz)
+//<o>TIM14ã€TIM16 PWMåŸºæ•°å‘¨æœŸè®¾å®š(Hz)
 //<100=>100Hz
 //<1000=>1KHz
 //<1000000=>1MHz
@@ -17,7 +17,7 @@ extern uint32_t time2Counter1ms;//ÍâÉè²»Õ¼ÓÃÑÓÊ±º¯ÊıÖ´ĞĞ¼ä¸ô
 //#define TIMEEND   0
 
 
-void TIM3_Initial(void); //Ã¿1 Ms·¢ÉúÒ»´Î¸üĞÂÊÂ¼ş(½øÈëÖĞ¶Ï·şÎñ³ÌĞò).
+void TIM3_Initial(void); //æ¯1 Mså‘ç”Ÿä¸€æ¬¡æ›´æ–°äº‹ä»¶(è¿›å…¥ä¸­æ–­æœåŠ¡ç¨‹åº).
 
 void TIM16_Initial(uint16_t periodHz);
 

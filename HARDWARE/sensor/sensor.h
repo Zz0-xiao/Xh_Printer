@@ -6,26 +6,26 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-#define LSENSOR	  GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_6)//µÍµÄÎ»ÖÃ´«¸ĞÆ÷ÊúÖ±·½Ïò
+#define LSENSOR	  GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_6)//ä½çš„ä½ç½®ä¼ æ„Ÿå™¨ç«–ç›´æ–¹å‘
 #define HSENSOR	  GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_7)
 
-#define LINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5)//µÍµÄºìÍâ´«¸ĞÆ÷¼ì²âÓĞÎŞÎïÌåµôÂä
+#define LINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5)//ä½çš„çº¢å¤–ä¼ æ„Ÿå™¨æ£€æµ‹æœ‰æ— ç‰©ä½“æ‰è½
 #define HINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6)
-#define RINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)//Ë®Æ½¸´Î»ÓÃ
+#define RINFRARE	  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)//æ°´å¹³å¤ä½ç”¨
 
-#define LSENSOR_RESPONSE	1//´«¸ĞÆ÷Î»ÖÃµÍ
-#define HSENSOR_RESPONSE	2//´«¸ĞÆ÷Î»ÖÃ¸ß
+#define LSENSOR_RESPONSE	1//ä¼ æ„Ÿå™¨ä½ç½®ä½
+#define HSENSOR_RESPONSE	2//ä¼ æ„Ÿå™¨ä½ç½®é«˜
 
-//#define LINFRARE_RESPONSE	1//¼ì²âÓĞÖ½ÕÅ
-//#define HINFRARE_RESPONSE	2//¼ì²âÖ½ÕÅ±»ÄÃ×ß
+//#define LINFRARE_RESPONSE	1//æ£€æµ‹æœ‰çº¸å¼ 
+//#define HINFRARE_RESPONSE	2//æ£€æµ‹çº¸å¼ è¢«æ‹¿èµ°
 
-//#define RINFRARE_RESPONSE	1//¸´Î»´«¸ĞÆ÷Î»ÖÃÍĞÅÌºáÏò
+//#define RINFRARE_RESPONSE	1//å¤ä½ä¼ æ„Ÿå™¨ä½ç½®æ‰˜ç›˜æ¨ªå‘
 
-void SENSOR_Init(void); //IO³õÊ¼»¯
+void SENSOR_Init(void); //IOåˆå§‹åŒ–
 
 uint8_t SENSOR_Scan(void);
 //uint8_t INFRARE_Scan(void);
 
-//¹¦ÄÜ£º¼ì²âË®Æ½Î»ÖÃÊÇ·ñ¸´Î»
+//åŠŸèƒ½ï¼šæ£€æµ‹æ°´å¹³ä½ç½®æ˜¯å¦å¤ä½
 //uint8_t RNFRARE_Scan(void);
 #endif

@@ -3,15 +3,15 @@
 #include "delay.h"
 
 
-//µç»ú´íÎó×´Ì¬±êÖ¾£¬Ö»ÄÜ¸³ÖµMOTORV,MOTORH,MOTOR_OKÃ»ÓÃÉÏ£¬Ô¤Áô
-//´Ë±êÖ¾ÖÃÎ»Ôòµç»úÍ£Ö¹²¢²»ÏìÓ¦ÈÎºÎµç»úÇı¶¯Ö¸Áî
+//ç”µæœºé”™è¯¯çŠ¶æ€æ ‡å¿—ï¼Œåªèƒ½èµ‹å€¼MOTORV,MOTORH,MOTOR_OKæ²¡ç”¨ä¸Šï¼Œé¢„ç•™
+//æ­¤æ ‡å¿—ç½®ä½åˆ™ç”µæœºåœæ­¢å¹¶ä¸å“åº”ä»»ä½•ç”µæœºé©±åŠ¨æŒ‡ä»¤
 uint8_t MotorErrorFlag = MOTOR_OK;
-//ÓëMOTORÒ»Ò»¶ÔÓ¦ ¶¨Ê±Æ÷
+//ä¸MOTORä¸€ä¸€å¯¹åº” å®šæ—¶å™¨
 TIM_TypeDef* MOTORTIM[] = {TIM14, TIM16};
 
-uint8_t motorState[2] = {MOTOR_STOP, MOTOR_STOP}; //¼ÇÂ¼µç»ú×´Ì¬£¬µç»ú×ªÏò¸Ä±äÊ±²»Í»±ä
+uint8_t motorState[2] = {MOTOR_STOP, MOTOR_STOP}; //è®°å½•ç”µæœºçŠ¶æ€ï¼Œç”µæœºè½¬å‘æ”¹å˜æ—¶ä¸çªå˜
 
-//Ğ¡µç»ú×ªµ½ÏÂÒ»±êÖ¾¼ÆÊ±
+//å°ç”µæœºè½¬åˆ°ä¸‹ä¸€æ ‡å¿—è®¡æ—¶
 //volatile uint32_t timeOut[] = {TIMEEND, TIMEEND};
 
 void Motor_Init(void)
@@ -20,24 +20,24 @@ void Motor_Init(void)
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOC, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_12 | GPIO_Pin_11 | GPIO_Pin_2;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; //Ä£Ê½£ºÊä³ö
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //Êä³öÀàĞÍ£¬ÍÆÍìÊä³ö
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; //æ¨¡å¼ï¼šè¾“å‡º
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //è¾“å‡ºç±»å‹ï¼Œæ¨æŒ½è¾“å‡º
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; //Ä£Ê½£ºÊä³ö
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //Êä³öÀàĞÍ£¬ÍÆÍìÊä³ö
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; //æ¨¡å¼ï¼šè¾“å‡º
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //è¾“å‡ºç±»å‹ï¼Œæ¨æŒ½è¾“å‡º
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
 /*******************************
-Ãû³Æ£ºMotorDrive57();
-¹¦ÄÜ£º57µç»úÇı¶¯£¬°üÀ¨ÉÏ¡¢Ç°£¬ÏÂ¡¢ºó ²»ÉùÃ÷
-²ÎÊı£ºmotor_number µç»úºÅÊúÖ±µç»úMOTORV¡¢Ë®Æ½µç»úMOTORHË³Ğò²»ÄÜµßµ¹
-			motor_mode   µç»úÇı¶¯·½Ïò¼ûMOTOR_STATE
-·µ»Ø£º²Ù×÷½á¹û¼ûcommunication.h
+åç§°ï¼šMotorDrive57();
+åŠŸèƒ½ï¼š57ç”µæœºé©±åŠ¨ï¼ŒåŒ…æ‹¬ä¸Šã€å‰ï¼Œä¸‹ã€å ä¸å£°æ˜
+å‚æ•°ï¼šmotor_number ç”µæœºå·ç«–ç›´ç”µæœºMOTORVã€æ°´å¹³ç”µæœºMOTORHé¡ºåºä¸èƒ½é¢ å€’
+			motor_mode   ç”µæœºé©±åŠ¨æ–¹å‘è§MOTOR_STATE
+è¿”å›ï¼šæ“ä½œç»“æœè§communication.h
 *******************************/
 HAL_StatusTypeDef MotorDrive57(MOTOR_STATE motor_number, MOTOR_STATE motor_mode)
 {
@@ -53,25 +53,25 @@ HAL_StatusTypeDef MotorDrive57(MOTOR_STATE motor_number, MOTOR_STATE motor_mode)
 //			indexKHz = 0;
 //		timePeriod[MOTORV] = 47999;
 //		timePeriod[MOTORH] = 23999;
-//		TIM_SetAutoreload(MOTORTIM[motor_number],timePeriod[motor_number]-1);//³õÊ¼»¯¶¨Ê±Æ÷¼ÆÊıÖµ
+//		TIM_SetAutoreload(MOTORTIM[motor_number],timePeriod[motor_number]-1);//åˆå§‹åŒ–å®šæ—¶å™¨è®¡æ•°å€¼
 //		TIM_SetCompare1(MOTORTIM[motor_number],(timePeriod[motor_number]-1)/2);
 
         if((motor_mode != MOTOR_STOP) && (motorState[motor_number] != MOTOR_STOP))
         {
-            TIM_Cmd(MOTORTIM[motor_number], DISABLE); //Í£Ö¹µç»ú
+            TIM_Cmd(MOTORTIM[motor_number], DISABLE); //åœæ­¢ç”µæœº
             HAL_Delayms(500);
         }
 
-        motorState[motor_number] = motor_mode;//¸ü¸Äµç»ú×´Ì¬
+        motorState[motor_number] = motor_mode;//æ›´æ”¹ç”µæœºçŠ¶æ€
 
 //        if(timeOut[motor_number] == TIMEEND)
-//            timeOut[motor_number] = TIMESTART; //Èç¹ûÃ»ÓĞ¿ªÆôµç»ú³¬Ê±£¬Ôò¿ªÆô
+//            timeOut[motor_number] = TIMESTART; //å¦‚æœæ²¡æœ‰å¼€å¯ç”µæœºè¶…æ—¶ï¼Œåˆ™å¼€å¯
 
         switch(motor_mode)
         {
         case MOTOR_STOP:
 //            timeOut[motor_number] = TIMEEND;
-            TIM_Cmd(MOTORTIM[motor_number], DISABLE); //Í£Ö¹µç»ú
+            TIM_Cmd(MOTORTIM[motor_number], DISABLE); //åœæ­¢ç”µæœº
             break;
         case MOTOR_MOVE_BD:
             if(motor_number == MOTORV)
@@ -97,10 +97,10 @@ HAL_StatusTypeDef MotorDrive57(MOTOR_STATE motor_number, MOTOR_STATE motor_mode)
 }
 
 /*******************************
-Ãû³Æ£ºIntroduction();
-¹¦ÄÜ£ºÖ±Á÷µç»ú¿ØÖÆ£¬ÍÆ³öÖ½ÕÅ
-²ÎÊı£ºSTOP£¬RUN
-·µ»Ø£ºÎŞ
+åç§°ï¼šIntroduction();
+åŠŸèƒ½ï¼šç›´æµç”µæœºæ§åˆ¶ï¼Œæ¨å‡ºçº¸å¼ 
+å‚æ•°ï¼šSTOPï¼ŒRUN
+è¿”å›ï¼šæ— 
 *******************************/
 
 void Put(uint8_t state)

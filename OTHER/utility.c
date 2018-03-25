@@ -1,12 +1,12 @@
 #include "utility.h"
 
 /*******************************
-Ãû³Æ£ºCheckCrc(uint8_t* pbuff) & crc16one()
-¹¦ÄÜ£ºCCITTĞ£Ñé£¬²¢²»ÉùÃ÷
-²ÎÊı£ºnull
-·µ»Ø£ºnull
+åç§°ï¼šCheckCrc(uint8_t* pbuff) & crc16one()
+åŠŸèƒ½ï¼šCCITTæ ¡éªŒï¼Œå¹¶ä¸å£°æ˜
+å‚æ•°ï¼šnull
+è¿”å›ï¼šnull
 *******************************/
-uint16_t Crc16CCITT_Table[16]= { /* CRC 16bitÓàÊ½±í */
+uint16_t Crc16CCITT_Table[16]= { /* CRC 16bitä½™å¼è¡¨ */
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
     0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef
 };
@@ -28,12 +28,12 @@ uint16_t crc16one(uint8_t input,uint16_t incrc)
 }
 
 /*******************************
-Ãû³Æ£ºXorCheck();
-¹¦ÄÜ£ºÒì»òĞ£ÑéÒÔ¼°¼ÆËã
-²ÎÊı£ºuint8_t *buff »º³åÇøµØÖ·
-			uint16_t buffsize »º³åÇø´óĞ¡
-			uint8_t* crc crcÖµ
-·µ»Ø£ºÒì»òÖµ 1Byte
+åç§°ï¼šXorCheck();
+åŠŸèƒ½ï¼šå¼‚æˆ–æ ¡éªŒä»¥åŠè®¡ç®—
+å‚æ•°ï¼šuint8_t *buff ç¼“å†²åŒºåœ°å€
+			uint16_t buffsize ç¼“å†²åŒºå¤§å°
+			uint8_t* crc crcå€¼
+è¿”å›ï¼šå¼‚æˆ–å€¼ 1Byte
 *******************************/
 
 uint8_t CrcCheck(uint8_t *buff,uint16_t buffsize,uint8_t* crc)
@@ -47,11 +47,11 @@ uint8_t CrcCheck(uint8_t *buff,uint16_t buffsize,uint8_t* crc)
 }
 
 /*******************************
-Ãû³Æ£ºBuffReset_API();
-¹¦ÄÜ£ºÊı×éÇå¿Õ£¬¸³0
-²ÎÊı£ºuint8_t *buff »º³åÇøµØÖ·
-			uint16_t size »º³åÇø´óĞ¡
-·µ»Ø£ºnull
+åç§°ï¼šBuffReset_API();
+åŠŸèƒ½ï¼šæ•°ç»„æ¸…ç©ºï¼Œèµ‹0
+å‚æ•°ï¼šuint8_t *buff ç¼“å†²åŒºåœ°å€
+			uint16_t size ç¼“å†²åŒºå¤§å°
+è¿”å›ï¼šnull
 *******************************/
 void BuffReset_API(uint8_t *pdata,uint16_t size)
 {
@@ -64,10 +64,10 @@ void BuffReset_API(uint8_t *pdata,uint16_t size)
 }
 
 /*******************************
-Ãû³Æ£ºASCII_TO_INT;
-¹¦ÄÜ£ºasciiÂë×ª»»³É8½øÖÆ
-²ÎÊı£ºuint8_t* pdataËùÓĞÊı¾İµÄÊ×µØÖ·£¬×ª»»¸öÊı
-·µ»Ø£ºĞ­ÒéÖĞDATA²¿·ÖµÄ³¤¶È
+åç§°ï¼šASCII_TO_INT;
+åŠŸèƒ½ï¼šasciiç è½¬æ¢æˆ8è¿›åˆ¶
+å‚æ•°ï¼šuint8_t* pdataæ‰€æœ‰æ•°æ®çš„é¦–åœ°å€ï¼Œè½¬æ¢ä¸ªæ•°
+è¿”å›ï¼šåè®®ä¸­DATAéƒ¨åˆ†çš„é•¿åº¦
 *******************************/
 uint32_t ASCII_TO_INT(uint8_t *pdata,uint16_t NUM)
 {

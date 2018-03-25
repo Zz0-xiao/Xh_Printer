@@ -3,44 +3,44 @@
 
 
 
-//½«ÏµÍ³Ê±ÖÓ24·ÖÆµ£¬¼ÆÊıÆµÂÊÎª48MHz/24 = 2MHz£¬Ôò¼ÆÒ»¸öÊıµÄÊ±¼äÎª0.5us¡£¼ÆÂú200¸öÊıµÄÊ±¼äÎª100us¡£Õâ¾ÍÊÇTIM3µÄ¶¨Ê±ÖÜÆÚ¡£
-void TIM3_Initial(void) //Ã¿100us·¢ÉúÒ»´Î¸üĞÂÊÂ¼ş(½øÈëÖĞ¶Ï·şÎñ³ÌĞò).
+//å°†ç³»ç»Ÿæ—¶é’Ÿ24åˆ†é¢‘ï¼Œè®¡æ•°é¢‘ç‡ä¸º48MHz/24 = 2MHzï¼Œåˆ™è®¡ä¸€ä¸ªæ•°çš„æ—¶é—´ä¸º0.5usã€‚è®¡æ»¡200ä¸ªæ•°çš„æ—¶é—´ä¸º100usã€‚è¿™å°±æ˜¯TIM3çš„å®šæ—¶å‘¨æœŸã€‚
+void TIM3_Initial(void) //æ¯100uså‘ç”Ÿä¸€æ¬¡æ›´æ–°äº‹ä»¶(è¿›å…¥ä¸­æ–­æœåŠ¡ç¨‹åº).
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-    TIM_DeInit(TIM3);                        //ÖØĞÂ½«TimerÉèÖÃÎªÈ±Ê¡Öµ
-    TIM_InternalClockConfig(TIM3);           //²ÉÓÃÄÚ²¿Ê±ÖÓ¸øTIM3Ìá¹©Ê±ÖÓÔ´
-    TIM_ARRPreloadConfig(TIM3, DISABLE);     //½ûÖ¹ARRÔ¤×°ÔØ»º³åÆ÷ Ô¤×°ÔØ¼Ä´æÆ÷µÄÄÚÈİ±»Á¢¼´´«ËÍµ½Ó°×Ó¼Ä´æÆ÷
+    TIM_DeInit(TIM3);                        //é‡æ–°å°†Timerè®¾ç½®ä¸ºç¼ºçœå€¼
+    TIM_InternalClockConfig(TIM3);           //é‡‡ç”¨å†…éƒ¨æ—¶é’Ÿç»™TIM3æä¾›æ—¶é’Ÿæº
+    TIM_ARRPreloadConfig(TIM3, DISABLE);     //ç¦æ­¢ARRé¢„è£…è½½ç¼“å†²å™¨ é¢„è£…è½½å¯„å­˜å™¨çš„å†…å®¹è¢«ç«‹å³ä¼ é€åˆ°å½±å­å¯„å­˜å™¨
 
-    TIM_TimeBaseStructure.TIM_Prescaler = 24 - 1; //Ô¤·ÖÆµÏµÊıÎª24-1£¬ÕâÑù¼ÆÊıÆ÷¼ÆÊıÆµÂÊÎª48MHz/24 = 2MHz
+    TIM_TimeBaseStructure.TIM_Prescaler = 24 - 1; //é¢„åˆ†é¢‘ç³»æ•°ä¸º24-1ï¼Œè¿™æ ·è®¡æ•°å™¨è®¡æ•°é¢‘ç‡ä¸º48MHz/24 = 2MHz
 //    TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 1000000) - 1;//1us = 1 000 000Hz
-    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //ÉèÖÃÊ±ÖÓ·Ö¸î
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //ÉèÖÃ¼ÆÊıÆ÷Ä£Ê½ÎªÏòÉÏ¼ÆÊıÄ£Ê½
-    TIM_TimeBaseStructure.TIM_Period = 1999;                     //ÉèÖÃ¼ÆÊıÒç³ö´óĞ¡£¬Ã¿200¸öÊı¾Í²úÉúÒ»¸ö¸üĞÂÊÂ¼ş
-    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);             //½«ÅäÖÃÓ¦ÓÃµ½TIM3ÖĞ
+    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //è®¾ç½®æ—¶é’Ÿåˆ†å‰²
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //è®¾ç½®è®¡æ•°å™¨æ¨¡å¼ä¸ºå‘ä¸Šè®¡æ•°æ¨¡å¼
+    TIM_TimeBaseStructure.TIM_Period = 1999;                     //è®¾ç½®è®¡æ•°æº¢å‡ºå¤§å°ï¼Œæ¯200ä¸ªæ•°å°±äº§ç”Ÿä¸€ä¸ªæ›´æ–°äº‹ä»¶
+    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);             //å°†é…ç½®åº”ç”¨åˆ°TIM3ä¸­
 
-    TIM_ClearFlag(TIM3, TIM_FLAG_Update); //Çå³ıÒç³öÖĞ¶Ï±êÖ¾
-    TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE); //Ê¹ÄÜTIM3µÄ¸üĞÂÖĞ¶Ï
-    TIM_Cmd(TIM3, ENABLE); //¿ªÆô¶¨Ê±Æ÷3
+    TIM_ClearFlag(TIM3, TIM_FLAG_Update); //æ¸…é™¤æº¢å‡ºä¸­æ–­æ ‡å¿—
+    TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE); //ä½¿èƒ½TIM3çš„æ›´æ–°ä¸­æ–­
+    TIM_Cmd(TIM3, ENABLE); //å¼€å¯å®šæ—¶å™¨3
 
-    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn; //TIM3ÖĞ¶Ï
-    NVIC_InitStructure.NVIC_IRQChannelPriority = 1; //ÏÈÕ¼ÓÅÏÈ¼¶1¼¶
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//IRQÍ¨µÀ±»Ê¹ÄÜ
-    NVIC_Init(&NVIC_InitStructure);                //³õÊ¼»¯NVIC¼Ä´æÆ÷
+    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn; //TIM3ä¸­æ–­
+    NVIC_InitStructure.NVIC_IRQChannelPriority = 1; //å…ˆå ä¼˜å…ˆçº§1çº§
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//IRQé€šé“è¢«ä½¿èƒ½
+    NVIC_Init(&NVIC_InitStructure);                //åˆå§‹åŒ–NVICå¯„å­˜å™¨
 }
 
 
 /*******************************
-Ãû³Æ£ºTIM16_Initial();
-¹¦ÄÜ£ºTIM16³õÊ¼»¯
-²ÎÊı: ·ÖÆµÖµ
-·µ»Ø£ºÎŞ
+åç§°ï¼šTIM16_Initial();
+åŠŸèƒ½ï¼šTIM16åˆå§‹åŒ–
+å‚æ•°: åˆ†é¢‘å€¼
+è¿”å›ï¼šæ— 
 *******************************/
 
-//*Tout= ((×Ô¶¯ÖØ×°ÔØ+1)*(Ê±ÖÓÆµÂÊ³ıÊıµÄÔ¤·ÖÆµÖµ+1))/Tclk£»
+//*Tout= ((è‡ªåŠ¨é‡è£…è½½+1)*(æ—¶é’Ÿé¢‘ç‡é™¤æ•°çš„é¢„åˆ†é¢‘å€¼+1))/Tclkï¼›
 
 void TIM16_Initial(uint16_t periodHz)
 {
@@ -56,7 +56,7 @@ void TIM16_Initial(uint16_t periodHz)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;											//¸´ÓÃÍÆÍìÊä³ö
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;											//å¤ç”¨æ¨æŒ½è¾“å‡º
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -64,17 +64,17 @@ void TIM16_Initial(uint16_t periodHz)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM16 , ENABLE);
 
-    TIM_TimeBaseStructure.TIM_Prescaler = 10 - 1;                       														//Ô¤·ÖÆµÏµÊıÎª10-1£¬ÕâÑù¼ÆÊıÆ÷¼ÆÊıÆµÂÊÎª48MHz/10 = 2MHz
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;																	//TIMÏòÉÏ¼ÆÊıÄ£Ê½
-    TIM_TimeBaseStructure.TIM_Period = (uint16_t) (SystemCoreClock / (periodHz * basePeroid)) - 1; //ÉèÖÃ¼ÆÊıÒç³ö´óĞ¡£¬
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;																								//ÉèÖÃÊ±ÖÓ·Ö¸î:TDTS = Tck_tim
+    TIM_TimeBaseStructure.TIM_Prescaler = 10 - 1;                       														//é¢„åˆ†é¢‘ç³»æ•°ä¸º10-1ï¼Œè¿™æ ·è®¡æ•°å™¨è®¡æ•°é¢‘ç‡ä¸º48MHz/10 = 2MHz
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;																	//TIMå‘ä¸Šè®¡æ•°æ¨¡å¼
+    TIM_TimeBaseStructure.TIM_Period = (uint16_t) (SystemCoreClock / (periodHz * basePeroid)) - 1; //è®¾ç½®è®¡æ•°æº¢å‡ºå¤§å°ï¼Œ
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;																								//è®¾ç½®æ—¶é’Ÿåˆ†å‰²:TDTS = Tck_tim
 
     TIM_TimeBaseInit(TIM16, &TIM_TimeBaseStructure);
 
     /* Channel 1, 2,3 and 4 Configuration in PWM mode */
     TIM_OCStructInit(&TIM_OCInitStructure);
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;																		//Ñ¡Ôñ¶¨Ê±Æ÷Ä£Ê½:TIMÂö³å¿í¶Èµ÷ÖÆÄ£Ê½1
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;												//±È½ÏÊä³öÊ¹ÄÜ
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;																		//é€‰æ‹©å®šæ—¶å™¨æ¨¡å¼:TIMè„‰å†²å®½åº¦è°ƒåˆ¶æ¨¡å¼1
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;												//æ¯”è¾ƒè¾“å‡ºä½¿èƒ½
     TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable;
     TIM_OCInitStructure.TIM_Pulse = (uint16_t)(SystemCoreClock / (periodHz * basePeroid)) / 2;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
@@ -90,13 +90,13 @@ void TIM16_Initial(uint16_t periodHz)
 
 
 /*******************************
-Ãû³Æ£ºTIM14_Initial();
-¹¦ÄÜ£ºTIM14³õÊ¼»¯
-²ÎÊı: ·ÖÆµÖµ
-·µ»Ø£ºÎŞ
+åç§°ï¼šTIM14_Initial();
+åŠŸèƒ½ï¼šTIM14åˆå§‹åŒ–
+å‚æ•°: åˆ†é¢‘å€¼
+è¿”å›ï¼šæ— 
 *******************************/
 
-//*Tout= ((×Ô¶¯ÖØ×°ÔØ+1)*(Ê±ÖÓÆµÂÊ³ıÊıµÄÔ¤·ÖÆµÖµ+1))/Tclk£»
+//*Tout= ((è‡ªåŠ¨é‡è£…è½½+1)*(æ—¶é’Ÿé¢‘ç‡é™¤æ•°çš„é¢„åˆ†é¢‘å€¼+1))/Tclkï¼›
 
 void TIM14_Initial(uint16_t periodHz)
 {
@@ -149,11 +149,11 @@ void TIM14_Initial(uint16_t periodHz)
     TIM_CtrlPWMOutputs(TIM14, ENABLE);
 }
 
-uint16_t time3Usart1ms = 1; //´®¿Ú³¬Ê±¼ÆÊ±±êÖ¾
-//uint16_t time3Debouncet1ms = 1; //°´¼üÏû¶¶
+uint16_t time3Usart1ms = 1; //ä¸²å£è¶…æ—¶è®¡æ—¶æ ‡å¿—
+//uint16_t time3Debouncet1ms = 1; //æŒ‰é”®æ¶ˆæŠ–
 //extern volatile uint32_t timer3_100us = 0;
-volatile int delayCounter = 0;//½öÓÃÓÚHAL_Delay()¾«È·¶¨Ê±Æ÷º¯Êı£¬Îğ¸Ä±ä
-uint32_t time2Counter1ms = 1;//ÍâÉè²»Õ¼ÓÃÑÓÊ±º¯ÊıÖ´ĞĞ¼ä¸ô
+volatile int delayCounter = 0;//ä»…ç”¨äºHAL_Delay()ç²¾ç¡®å®šæ—¶å™¨å‡½æ•°ï¼Œå‹¿æ”¹å˜
+uint32_t time2Counter1ms = 1;//å¤–è®¾ä¸å ç”¨å»¶æ—¶å‡½æ•°æ‰§è¡Œé—´éš”
 
 void TIM3_IRQHandler(void)
 {
@@ -191,31 +191,31 @@ void TIM3_IRQHandler(void)
 
 
 
-//* ÎÄ¼şÃû£ºvoid TIMX_Configuration(u16 arr,u16 psc)
-//* Ãè  Êö: ¶¨Ê±Æ÷3³õÊ¼»¯ÅäÖÃº¯Êı
-//* ¹¦  ÄÜ£ºË¢ĞÂ
-//* ×÷  Õß£º
-//* °æ±¾ºÅ£º1.0.1(2015.03.03)
+//* æ–‡ä»¶åï¼švoid TIMX_Configuration(u16 arr,u16 psc)
+//* æ  è¿°: å®šæ—¶å™¨3åˆå§‹åŒ–é…ç½®å‡½æ•°
+//* åŠŸ  èƒ½ï¼šåˆ·æ–°
+//* ä½œ  è€…ï¼š
+//* ç‰ˆæœ¬å·ï¼š1.0.1(2015.03.03)
 //*******************************************************************************/
-///*¼ÆËãÖĞ¶ÏÊ±¼ä,¼ÆËã¹«Ê½ÈçÏÂ£º
-//*Tout= ((arr+1)*(psc+1))/Tclk£»
-//*ÆäÖĞ£º
-//*Tclk£ºTIM3 µÄÊäÈëÊ±ÖÓÆµÂÊ£¨µ¥Î»Îª Mhz£©72MHz
-//*Tout£ºTIM3 Òç³öÊ±¼ä£¨µ¥Î»Îª us£©
+///*è®¡ç®—ä¸­æ–­æ—¶é—´,è®¡ç®—å…¬å¼å¦‚ä¸‹ï¼š
+//*Tout= ((arr+1)*(psc+1))/Tclkï¼›
+//*å…¶ä¸­ï¼š
+//*Tclkï¼šTIM3 çš„è¾“å…¥æ—¶é’Ÿé¢‘ç‡ï¼ˆå•ä½ä¸º Mhzï¼‰72MHz
+//*Toutï¼šTIM3 æº¢å‡ºæ—¶é—´ï¼ˆå•ä½ä¸º usï¼‰
 //*/
-//void TIM3_Configuration(u16 arr,u16 psc)//Í¨ÓÃ¶¨Ê±Æ÷£¨2£¬3£¬4£¬5£©µÄÅäÖÃº¯Êı
+//void TIM3_Configuration(u16 arr,u16 psc)//é€šç”¨å®šæ—¶å™¨ï¼ˆ2ï¼Œ3ï¼Œ4ï¼Œ5ï¼‰çš„é…ç½®å‡½æ•°
 //{
 //        TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-//        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 ,ENABLE);//Ê¹ÄÜ¶¨Ê±Æ÷3,APB1PeriphClock
+//        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 ,ENABLE);//ä½¿èƒ½å®šæ—¶å™¨3,APB1PeriphClock
 
-//        //¶¨Ê±Æ÷ TIM3 ³õÊ¼»¯
-//        TIM_TimeBaseStructure.TIM_Period = arr; //ÉèÖÃ×Ô¶¯ÖØ×°ÔØ¼Ä´æÆ÷ÖÜÆÚµÄÖµ
-//        TIM_TimeBaseStructure.TIM_Prescaler = psc;//ÉèÖÃÊ±ÖÓÆµÂÊ³ıÊıµÄÔ¤·ÖÆµÖµ
-//        TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //ÉèÖÃÊ±ÖÓ·Ö¸î
-//        TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM ÏòÉÏ¼ÆÊı
-//        TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //¢Ú³õÊ¼»¯ TIM3
-//        TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE ); //¢ÛÔÊĞí¸üĞÂÖĞ¶Ï
-//        TIM_Cmd(TIM3, ENABLE); //¢İÊ¹ÄÜ TIM3
+//        //å®šæ—¶å™¨ TIM3 åˆå§‹åŒ–
+//        TIM_TimeBaseStructure.TIM_Period = arr; //è®¾ç½®è‡ªåŠ¨é‡è£…è½½å¯„å­˜å™¨å‘¨æœŸçš„å€¼
+//        TIM_TimeBaseStructure.TIM_Prescaler = psc;//è®¾ç½®æ—¶é’Ÿé¢‘ç‡é™¤æ•°çš„é¢„åˆ†é¢‘å€¼
+//        TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //è®¾ç½®æ—¶é’Ÿåˆ†å‰²
+//        TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM å‘ä¸Šè®¡æ•°
+//        TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //â‘¡åˆå§‹åŒ– TIM3
+//        TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE ); //â‘¢å…è®¸æ›´æ–°ä¸­æ–­
+//        TIM_Cmd(TIM3, ENABLE); //â‘¤ä½¿èƒ½ TIM3
 //
 //}
 
